@@ -1,0 +1,10 @@
+# Stock hoverboard firmware backups belong to the maker: never commit them
+*.bin
+*.hex
+*.elf
+# Build output and editor junk
+.pio/
+build/
+.vscode/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,17 @@
+ReKart plans by Reboot Engineering
+Copyright (c) 2026 Reboot Engineering (Bartlett High School PLTW Capstone Honors team)
+
+Everything in this repository that is NOT code is licensed under the
+Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0).
+That covers the cad/ folder (CAD exports, DXFs, drawings) and the docs/ folder
+(wiring diagrams, parts list, build steps, test data, photos).
+
+You may share and adapt these plans for any purpose, including commercially, as long as you:
+  - give credit to Reboot Engineering and link to https://github.com/KevsBuilds/rekart-plans
+  - release anything you build on these plans under the same license
+
+Full license text: https://creativecommons.org/licenses/by-sa/4.0/legalcode
+
+Code (the esp32/ folder and our firmware settings in firmware/) is under the MIT License in LICENSE.
+The motor firmware we flash, hoverboard-firmware-hack-FOC and its forks, belongs to its authors
+and keeps its own license (GPL-3.0). We link to it; we do not redistribute it.
