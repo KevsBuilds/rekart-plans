@@ -56,11 +56,12 @@ Hoverboard bus (19200 8N1, master id 0, slave id 1)
 - BUS_RX -> D1.2 (A); D1.1 (K, band) -> S_PA2 -> J6.2 (slave PA2). Band toward the slave.
 - R4 (10k) BUS_RX -> +3V3 (side branch, never in series).
 - J5.1, J6.1 = GND.
-- J5.4, J6.4: **OPEN QUESTION** — the Gyroor slave's logic runs on the master's 5 V via the link connector's pin 4. If this board replaces the stock board-to-board cable, tie J5.4 <-> J6.4 as net HB_5V (not to +5V/ESP_5V). Otherwise no-connect both. Confirm how the slave got 5 V on the bench.
+- J5.4 <-> J6.4 = net **HB_5V** (master's 5 V feeds the slave's logic; the slave has no power switch). This replaces the 5 V wire of the stock board-to-board cable. HB_5V never touches +5V or ESP_5V.
+- The board-to-board data wires are NOT reproduced: each board's PA2/PA3 goes only to the bus as listed above.
 - J5/J6 pin order = the boards' link connector, top view left to right: GND, PA2, PA3, 5V. Cable is straight-through (NOT the crossed stock cable). Continuity-check which end is pin 1.
 
 ## Open questions
-1. Slave 5 V (above).
+1. Bench check before the PCB: run the bus with HB_5V + GND as the only board-to-board wires (stock cable unplugged) and confirm 0 bad frames on both ids.
 2. Battery: a Bioenno LiFePO4 12S (43.8 V full) pack would replace the settled 10S Li-ion (42 V). 88% of the boards' 50 V caps; needs a 43.8 V LiFePO4 charger (Gyroor 42 V charger won't work); low-battery limits change (estimates: warn 37.2 V, limp 36.0 V, stop 34.8 V). Team decision. The circuit works for either.
 3. Freenove board: does it have a diode between USB VBUS and the 5V pin? Decides whether JP1 stays.
 
