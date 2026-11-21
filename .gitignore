@@ -8,3 +8,11 @@ build/
 .vscode/
 .DS_Store
 Thumbs.db
+# KiCad: backups, local state, caches
+*-backups/
+*.kicad_prl
+*.lck
+fp-info-cache
+_autosave-*
+\#auto_saved_files#
+.history/
