@@ -22,3 +22,4 @@ Keys: `w`/`s` speed, `a`/`d` steer, `c` center, space = smooth stop, `x` = insta
 4. Space: both wheels ramp down to a stop in under 1 s.
 5. Unplug the ESP32's USB while spinning: both wheels soft-brake within 0.5 s (board failsafe).
 6. `odom` counts about 90 per wheel turn (turn a wheel by hand to check).
+7. Link-loss check: drive at speed 100, then switch the bench supply off. The monitor prints LINK LOST. Switch it back on: the wheels must stay still until you press `w` again.

@@ -40,6 +40,7 @@ static const int16_t RAMP_UP = 15;       // max change per 25 ms frame while spe
 static const int16_t RAMP_DOWN = 30;     // faster when slowing down (~1200/s)
 static const uint32_t FRAME_MS = 25;     // alternate wheels -> each board gets a frame every 50 ms
 static const uint8_t WSTATE = 0;         // LEDs off; never 64 or 128
+static const uint32_t LINK_TIMEOUT_MS = 300;  // no reply from a wheel this long -> everything to zero
 
 HardwareSerial Bus(2);
 
@@ -124,7 +125,18 @@ static void printHelp() {
   Serial.printf("  Bench caps: speed +-%d, steer +-%d (of 1000)\n\n", SPEED_LIMIT, STEER_LIMIT);
 }
 
+static bool linkUp() {
+  uint32_t now = millis();
+  for (int i = 0; i < 2; i++)
+    if (!fb[i].lastMs || now - fb[i].lastMs > LINK_TIMEOUT_MS) return false;
+  return true;
+}
+
 static void handleKey(char k) {
+  if (!linkUp() && (k == 'w' || k == 's' || k == 'a' || k == 'd')) {
+    Serial.println(F("Ignored: both wheels must show ok before driving."));
+    return;
+  }
   switch (k) {
     case 'w': targetSpeed = clampi(targetSpeed + STEP, -SPEED_LIMIT, SPEED_LIMIT); break;
     case 's': targetSpeed = clampi(targetSpeed - STEP, -SPEED_LIMIT, SPEED_LIMIT); break;
@@ -157,6 +169,22 @@ void loop() {
   readReplies();
 
   uint32_t now = millis();
+
+  // Safety: if either wheel stops answering (board off, bus unplugged), drop everything to zero.
+  // Otherwise the last speed would still be on the bus when the board comes back, and it would take off.
+  static bool linkWasLost = true;
+  bool linkOk = true;
+  for (int i = 0; i < 2; i++)
+    if (!fb[i].lastMs || now - fb[i].lastMs > LINK_TIMEOUT_MS) linkOk = false;
+  if (!linkOk) {
+    if ((targetSpeed || targetSteer || speedNow || steerNow) && !linkWasLost)
+      Serial.println(F("LINK LOST: speed and steer set to 0. Press keys again once both wheels show ok."));
+    targetSpeed = targetSteer = speedNow = steerNow = 0;
+    linkWasLost = true;
+  } else if (linkWasLost) {
+    Serial.println(F("Link OK on both wheels. Starting from zero."));
+    linkWasLost = false;
+  }
   if (now - lastFrame >= FRAME_MS) {
     lastFrame = now;
     if (sendLeft) {  // ramp once per full cycle (both wheels)
