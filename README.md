@@ -24,6 +24,7 @@ This is a student project, not a certified product. It's a vehicle with a lithiu
 - **Drivetrain:** the hoverboard's own hub motors and its two split control boards (one per wheel), reflashed with our fork of [Hoverboard-Firmware-Hack-Gen2.x](https://github.com/RoboDurden/Hoverboard-Firmware-Hack-Gen2.x) in UART bus mode.
 - **Controls:** a steering wheel with an angle sensor and hall-effect pedals, read by an ESP32 that mixes steer and speed and sends each wheel's speed to its board over one shared UART bus (19200 baud, board IDs 0 and 1).
 - **Safety:** brake overrides throttle, out-of-range pedals stop the kart, throttle must be zero at power-on, reverse only when stopped, a 10 mph cap with speed modes, and a wireless kill switch over ESP-NOW that stops the kart after 200 ms without a signal.
+- **Battery:** Bioenno Power BLF-3650AS, a 36 V LiFePO4 pack (12S, 43.8 V full), sponsored by [Bioenno Power](https://www.bioennopower.com/). Charged only with a 43.8 V LiFePO4 charger.
 - **Frame:** 1.5 in 6061 aluminum square tube bolted together with gusset plates. No welding.
 
 ## Licenses

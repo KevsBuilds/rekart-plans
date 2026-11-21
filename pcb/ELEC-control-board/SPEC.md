@@ -9,6 +9,12 @@ Bus wiring copies the bench setup that passed on Nov 18/20 (`esp32/bench-keyboar
 - Board 5 V (J5/J6 pin 4) never connects to the ESP32. Never power the ESP32 from a hoverboard board.
 - Skip on sheet 1: pedals, AS5600, screen, buttons (sheet 2), footprints, layout. Layout only after the circuit is proven; PCBWay order by Feb 15.
 
+## Battery (decided)
+- Bioenno BLF-3650AS, 36 V LiFePO4 12S: 43.8 V full, 38.4 V nominal. Sponsored by Bioenno Power. Replaces the 10S Li-ion (42 V).
+- 43.8 V = 88% of the boards' 50 V caps. Charge only with a 43.8 V LiFePO4 charger (the Gyroor 42 V charger won't work).
+- Low-battery limits (ESP32): warn 37.2 V, limp 36.0 V, stop 34.8 V. Firmware board levels match (see Known firmware limits).
+- **Until the bench test: verify the pack label shows 43.8 V charge voltage (confirms 12S).**
+
 ## ESP32
 - Freenove ESP32-WROVER on 2 x `Connector:Conn_01x20_Socket` (J1 left, J2 right; pin 1 = antenna end). Header spacing: measure with calipers before footprints.
 - In use: GPIO27 = bus TX, GPIO26 = bus RX, GPIO36 = battery sense. Later (sheet 2): pedals 32/33, AS5600 I2C 21/22, screen SPI 18/23/19 + CS 5, DC 4, BL 13, SD CS 25.
@@ -62,8 +68,7 @@ Hoverboard bus (19200 8N1, master id 0, slave id 1)
 
 ## Open questions
 1. Bench check before the PCB: run the bus with HB_5V + GND as the only board-to-board wires (stock cable unplugged) and confirm 0 bad frames on both ids.
-2. Battery: a Bioenno LiFePO4 12S (43.8 V full) pack would replace the settled 10S Li-ion (42 V). 88% of the boards' 50 V caps; needs a 43.8 V LiFePO4 charger (Gyroor 42 V charger won't work); low-battery limits change (estimates: warn 37.2 V, limp 36.0 V, stop 34.8 V). Team decision. The circuit works for either.
-3. Freenove board: does it have a diode between USB VBUS and the 5V pin? Decides whether JP1 stays.
+2. Freenove board: does it have a diode between USB VBUS and the 5V pin? Decides whether JP1 stays.
 
 ## Known firmware limits
 Gen2.x fork `rekart-firmware`, branch `gyroor-ol20180703` (master 2.2.20.1, slave HY-A02 2.1.28.1). Design around these:
