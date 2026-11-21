@@ -65,6 +65,14 @@ Hoverboard bus (19200 8N1, master id 0, slave id 1)
 2. Battery: a Bioenno LiFePO4 12S (43.8 V full) pack would replace the settled 10S Li-ion (42 V). 88% of the boards' 50 V caps; needs a 43.8 V LiFePO4 charger (Gyroor 42 V charger won't work); low-battery limits change (estimates: warn 37.2 V, limp 36.0 V, stop 34.8 V). Team decision. The circuit works for either.
 3. Freenove board: does it have a diode between USB VBUS and the 5V pin? Decides whether JP1 stays.
 
+## Known firmware limits
+Gen2.x fork `rekart-firmware`, branch `gyroor-ol20180703` (master 2.2.20.1, slave HY-A02 2.1.28.1). Design around these:
+- **No DC current sensing or limit on either board.** Neither layout defines `CURRENT_DC`, so `DC_CUR_LIMIT` (15 A) never triggers and the bus reply's current is a fixed fake 0.42 A. The ESP32 must ignore it. An inline fuse on the battery lead is required.
+- **No overvoltage protection.** Nothing in the firmware reacts to high bus voltage. Check the bulk capacitor voltage rating on both boards (12S LiFePO4 full = 43.8 V), and limit regen braking on a full pack.
+- **Slave `ADC_BATTERY_VOLT` is uncalibrated** (library default; the master has its own value). Calibrate both boards against a meter at the item 8 bench test.
+- **Battery reading starts at a 3.6 V/cell guess** (43.2 V for 12S) and filters slowly toward the real value. The ESP32 ignores low-battery levels for the first 10 s after boot.
+- Board low-battery levels (12S): beep below 37.2 V, orange below 36.0 V, red below 34.8 V. `BATTERY_LOW_SHUTOFF` stays off; the ESP32 owns limp/stop.
+
 ## Check commands (OptiPlex, Flatpak)
 ```
 cd ~/dev/rekart-plans/pcb/ELEC-control-board
