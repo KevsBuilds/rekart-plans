@@ -46,4 +46,16 @@ pcb/check.sh ELEC-control-board    # one board
 Writes `<board>/reports/` (erc/drc .json + .rpt, bom.csv, netlist.net). Prints a summary
 table; exits 1 on any error-severity violation (warnings don't fail).
 
-Firmware build: **TBD** (set up in item 6).
+## Build (hoverboard firmware, compile only)
+Source: `~/dev/rekart-firmware` (our Gen2.x fork), branch `gyroor-ol20180703`. PlatformIO is
+installed for kevin via pipx (`~/.local/bin/pio`).
+```bash
+cd ~/dev/rekart-firmware/HoverBoardGigaDevice
+pio run -e genericGD32F103C8 -e genericGD32F130C8   # build only: never add -t upload
+```
+| Board | Env | Layout | Output |
+|---|---|---|---|
+| Master (Gyroor, GD32F103, bus id 0) | `genericGD32F103C8` | 2.2.20 sub 1 | `.pio/build/genericGD32F103C8/firmware.bin` |
+| Slave (HY-A02, GD32F130, bus id 1) | `genericGD32F130C8` | 2.1.28 sub 1 | `.pio/build/genericGD32F130C8/firmware.bin` |
+
+Layout per chip is chosen in `Inc/config.h`. Copy the `.bin` files to Kevin's PC for flashing.
