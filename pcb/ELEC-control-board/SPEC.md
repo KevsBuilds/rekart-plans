@@ -12,8 +12,9 @@ Bus wiring copies the bench setup that passed on Nov 18/20 (`esp32/bench-keyboar
 ## Battery (decided)
 - Bioenno BLF-3650AS, 36 V LiFePO4 12S: 43.8 V full, 38.4 V nominal. Sponsored by Bioenno Power. Replaces the 10S Li-ion (42 V).
 - 43.8 V = 88% of the boards' 50 V caps. Charge only with a 43.8 V LiFePO4 charger (the Gyroor 42 V charger won't work).
-- Low-battery limits (ESP32): warn 37.2 V, limp 36.0 V, stop 34.8 V. Firmware board levels match (see Known firmware limits).
+- Low-battery limits (ESP32): warn 37.2 V, limp 36.0 V, stop 34.8 V (estimates). Firmware board levels match (see Known firmware limits).
 - **Until the bench test: verify the pack label shows 43.8 V charge voltage (confirms 12S).**
+- Arrival test pending. Battery bench items on hold until it passes (see Bench results).
 
 ## ESP32
 - Freenove ESP32-WROVER on 2 x `Connector:Conn_01x20_Socket` (J1 left, J2 right; pin 1 = antenna end). Header row spacing (J1 to J2, pin center to center): measured 25.3 mm (calipers Nov 21: outer edges 26.0, inner edges 24.6) = 25.4 mm (1.000 in, 10 x 2.54) for the footprint.
