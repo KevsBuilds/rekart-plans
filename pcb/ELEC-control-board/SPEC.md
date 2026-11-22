@@ -70,7 +70,7 @@ Hoverboard bus (19200 8N1, master id 0, slave id 1)
 ## Open questions
 1. Passed Nov 21: bus with only GND + HB_5V between boards, 0 bad frames on both ids over ~3,900 frames (24 V bench supply). Master 78M05 output 4.9 V, link pin 4 5.0 V, 0.01 V between them under power (direct trace).
 2. ~~Freenove board: does it have a diode between USB VBUS and the 5V pin?~~ **Answered Nov 21: no diode.** USB-C VBUS to the 5V header pin reads 0 both ways in diode mode (direct connection). JP1 stays; pull it before plugging in USB, or USB 5 V and the buck's +5V are tied together.
-3. HB_5V sags from 4.7 V to 4.1 V with the Gyroor slave's logic on it (about 20 mA extra; bench Nov 21). The slave's 3V3 still holds at 3.3 V. Find what's in series between the master's 5 V regulator and link pin 4 before the PCB order (Feb 15).
+3. HB_5V sags from 4.7 V to 4.1 V with the Gyroor slave's logic on it (about 20 mA extra; bench Nov 21). The slave's 3V3 still holds at 3.3 V. Find what's in series between the master's 5 V regulator and link pin 4 before the PCB order (Feb 15). On hold: re-check on the battery once the pack is decided and passes its arrival test (see Bench results).
 
 ## Known firmware limits
 Gen2.x fork `rekart-firmware`, branch `gyroor-ol20180703` (master 2.2.20.1, slave HY-A02 2.1.28.1). Design around these:
@@ -79,6 +79,11 @@ Gen2.x fork `rekart-firmware`, branch `gyroor-ol20180703` (master 2.2.20.1, slav
 - **Slave `ADC_BATTERY_VOLT` is uncalibrated** (library default; the master has its own value). Calibrate both boards against a meter at the item 8 bench test.
 - **Battery reading starts at a 3.6 V/cell guess** (43.2 V for 12S) and filters slowly toward the real value. The ESP32 ignores low-battery levels for the first 10 s after boot.
 - Board low-battery levels (12S): beep below 37.2 V, orange below 36.0 V, red below 34.8 V. `BATTERY_LOW_SHUTOFF` stays off; the ESP32 owns limp/stop.
+
+## Bench results
+- Nov 21, failsafe: USB pulled while both wheels spun: both soft-braked and stayed stopped until 'w'. Passed.
+- Nov 21, master voltage calibration point 1: Eventek bench supply set to 24.0 V, master reported 23.97 V.
+- On hold until the team decides on the Bioenno pack and it passes its arrival test: pack label check (43.8 V charge voltage), HB_5V re-check on the battery (open question 3), master voltage calibration point 2 (battery).
 
 ## Check commands (OptiPlex, Flatpak)
 ```
