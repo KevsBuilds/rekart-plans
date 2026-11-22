@@ -16,7 +16,7 @@ Bus wiring copies the bench setup that passed on Nov 18/20 (`esp32/bench-keyboar
 - **Until the bench test: verify the pack label shows 43.8 V charge voltage (confirms 12S).**
 
 ## ESP32
-- Freenove ESP32-WROVER on 2 x `Connector:Conn_01x20_Socket` (J1 left, J2 right; pin 1 = antenna end). Header spacing: measure with calipers before footprints.
+- Freenove ESP32-WROVER on 2 x `Connector:Conn_01x20_Socket` (J1 left, J2 right; pin 1 = antenna end). Header row spacing (J1 to J2, pin center to center): measured 25.3 mm (calipers Nov 21: outer edges 26.0, inner edges 24.6) = 25.4 mm (1.000 in, 10 x 2.54) for the footprint.
 - In use: GPIO27 = bus TX, GPIO26 = bus RX, GPIO36 = battery sense. Later (sheet 2): pedals 32/33, AS5600 I2C 21/22, screen SPI 18/23/19 + CS 5, DC 4, BL 13, SD CS 25.
 - Avoid 0, 2, 12, 15, 16, 17 (16/17 = PSRAM). Camera connector stays unplugged (shares 26/27 and others).
 - Unused socket pins get a no-connect (X) until sheet 2 uses them. Write the silkscreen name of every socket pin in a text box on the sheet.
