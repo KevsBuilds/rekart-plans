@@ -69,6 +69,7 @@ Hoverboard bus (19200 8N1, master id 0, slave id 1)
 ## Open questions
 1. Bench check before the PCB: run the bus with HB_5V + GND as the only board-to-board wires (stock cable unplugged) and confirm 0 bad frames on both ids.
 2. Freenove board: does it have a diode between USB VBUS and the 5V pin? Decides whether JP1 stays.
+3. HB_5V sags from 4.7 V to 4.1 V with the Gyroor slave's logic on it (about 20 mA extra; bench Nov 21). The slave's 3V3 still holds at 3.3 V. Find what's in series between the master's 5 V regulator and link pin 4 before the PCB order (Feb 15).
 
 ## Known firmware limits
 Gen2.x fork `rekart-firmware`, branch `gyroor-ol20180703` (master 2.2.20.1, slave HY-A02 2.1.28.1). Design around these:
