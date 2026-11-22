@@ -24,6 +24,7 @@ controllers. Project overview, safety rules and licenses: [README.md](README.md)
 - Flashing (ST-Link on the hoverboard boards, USB upload to the ESP32) and bench tests happen
   only on Kevin's Windows PC. **Never attempt to flash or upload** (`pio run -t upload`, `st-flash`,
   OpenOCD, etc.), even if a README shows the command.
+- How Kevin flashes on Windows (ST-Link, speed 200, CPUTAPID 0, verify): [docs/notes/flashing.md](docs/notes/flashing.md).
 
 ## Safety (stop and ask)
 Never change any of these without flagging it clearly and waiting for Kevin's OK:
