@@ -39,7 +39,7 @@ Bus wiring copies the bench setup that passed on Nov 18/20 (`esp32/bench-keyboar
 | R2 | Device:R | **5.6k** (not 7.5k: 3.05 V at full charge is in the ESP32 ADC's non-linear zone) |
 | R3 | Device:R | 1k |
 | R4 | Device:R | 10k |
-| JP1 | Jumper:Jumper_2_Open | 5V_EN (pull before plugging in USB until the Freenove VBUS diode is confirmed) |
+| JP1 | Jumper:Jumper_2_Open | 5V_EN (always pull before plugging in USB: the Freenove board has no VBUS diode) |
 | — | power:GND, +BATT, +5V, +3V3; PWR_FLAG on each | |
 
 KiCad diodes: pin 1 = K (band), pin 2 = A. C_Polarized: pin 1 = +.
@@ -68,7 +68,7 @@ Hoverboard bus (19200 8N1, master id 0, slave id 1)
 
 ## Open questions
 1. Bench check before the PCB: run the bus with HB_5V + GND as the only board-to-board wires (stock cable unplugged) and confirm 0 bad frames on both ids.
-2. Freenove board: does it have a diode between USB VBUS and the 5V pin? Decides whether JP1 stays.
+2. ~~Freenove board: does it have a diode between USB VBUS and the 5V pin?~~ **Answered Nov 21: no diode.** USB-C VBUS to the 5V header pin reads 0 both ways in diode mode (direct connection). JP1 stays; pull it before plugging in USB, or USB 5 V and the buck's +5V are tied together.
 3. HB_5V sags from 4.7 V to 4.1 V with the Gyroor slave's logic on it (about 20 mA extra; bench Nov 21). The slave's 3V3 still holds at 3.3 V. Find what's in series between the master's 5 V regulator and link pin 4 before the PCB order (Feb 15).
 
 ## Known firmware limits
