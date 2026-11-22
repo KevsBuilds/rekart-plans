@@ -3483,7 +3483,7 @@
 )
 (wire (pts (xy 246.38 40.64) (xy 248.92 40.64)) (stroke (width 0) (type default)) (uuid "25f80eb6-ed37-46f5-9588-bebdf2291979"))
 (label "ESP_5V" (at 248.92 40.64 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "eb346294-9ffa-4cb4-a17f-226fa44a65a2"))
-(text "JP1: pull before plugging in USB\nuntil the Freenove VBUS diode is confirmed" (exclude_from_sim no) (at 227.33 52.07 0) (effects (font (size 1.0 1.0)) (justify left bottom)) (uuid "3d04a850-b2d7-4bfa-832e-21e50faa286f"))
+(text "JP1: ALWAYS pull before plugging in USB\n(Freenove has no VBUS diode)" (exclude_from_sim no) (at 227.33 52.07 0) (effects (font (size 1.0 1.0)) (justify left bottom)) (uuid "3d04a850-b2d7-4bfa-832e-21e50faa286f"))
 (symbol (lib_id "power:+BATT") (at 129.54 68.58 0) (unit 1) (exclude_from_sim no) (in_bom no) (on_board no) (dnp no) (uuid "dfd6d57e-5aeb-4b3c-92d4-eed2d4ffe444")
 (property "Reference" "#PWR023" (at 129.54 68.58 0) (effects (font (size 1.27 1.27)) (hide yes)))
 (property "Value" "+BATT" (at 129.54 64.58 0) (effects (font (size 1.27 1.27))))
@@ -3738,7 +3738,7 @@
 (wire (pts (xy 248.92 128.27) (xy 246.38 128.27)) (stroke (width 0) (type default)) (uuid "bfd856c2-b298-4fa3-881a-d6b1ec9befac"))
 (label "HB_5V" (at 246.38 128.27 180) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "4bd70edc-56df-4290-815f-a077e29c305b"))
 (text "1 GND  2 PA2  3 PA3  4 5V" (exclude_from_sim no) (at 257.81 119.38 0) (effects (font (size 1.0 1.0)) (justify left bottom)) (uuid "e6618739-6a72-48d6-a3e4-3be667fdc79d"))
-(text "Bus = bench wiring verified Nov 18/20. J5/J6 pin 4 never to ESP32.\nCable straight-through, not the crossed stock cable.\nOPEN (SPEC Q2): JP1 depends on whether the Freenove board has a diode between USB VBUS and its 5V pin. Not resolved.\nOPEN (SPEC Q3): HB_5V sags 4.7 V -> 4.1 V with the slave's logic on it. Find what is in series before link pin 4. Not resolved." (exclude_from_sim no) (at 116.84 160.02 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "0bcab291-22e5-41b7-a53e-05b986f3501f"))
+(text "Bus = bench wiring verified Nov 18/20. J5/J6 pin 4 never to ESP32.\nCable straight-through, not the crossed stock cable.\nANSWERED (SPEC Q2, Nov 21): Freenove board has NO diode between USB VBUS and its 5V pin. JP1 stays.\nOPEN (SPEC Q3): HB_5V sags 4.7 V -> 4.1 V with the slave's logic on it. Find what is in series before link pin 4. Not resolved." (exclude_from_sim no) (at 116.84 160.02 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "0bcab291-22e5-41b7-a53e-05b986f3501f"))
 	(sheet_instances
 		(path "/"
 			(page "1")
