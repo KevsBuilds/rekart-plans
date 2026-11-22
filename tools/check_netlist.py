@@ -7,8 +7,8 @@ Defaults: pcb/ELEC-control-board/reports/netlist.net (written by pcb/check.sh)
 Exit 0 = every check passed, 1 = any failure, 2 = could not read input.
 
 EXPECTED below is SPEC.md's "Nets" section written out pin by pin. ESP32
-socket pins (J1/J2) come from the UNVERIFIED Freenove pin map on the sheet;
-update ESP32_PINS when Kevin has checked the silkscreen.
+socket pins (J1/J2) come from the Freenove pin map on the sheet (verified by
+Kevin against the USB-C board silkscreen, 2026-11-21).
 """
 import re
 import sys
@@ -17,7 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 BOARD = ROOT / "pcb" / "ELEC-control-board"
 
-# ---- ESP32 socket pins in use (pin map UNVERIFIED, see sheet text box) ----
+# ---- ESP32 socket pins in use (pin map verified 2026-11-21, see sheet text box) ----
 ESP32_PINS = {
     "+3V3": ["J1.1", "J1.16", "J1.17", "J1.18"],      # 3V3 pins
     "ESP_5V": ["J1.19", "J1.20"],                     # 5V pins
