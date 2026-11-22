@@ -5,7 +5,7 @@
 #   no argument: every pcb/*/ folder that has a .kicad_pro
 #   board-dir:   a path, or just the folder name under pcb/ (e.g. ELEC-control-board)
 #
-# Writes <board>/reports/{erc,drc}.{json,rpt}, bom.csv, netlist.net (git-ignored).
+# Writes <board>/reports/{erc,drc}.{json,rpt}, bom.csv, netlist.net, <board>.pdf (git-ignored).
 # Exit 0: no error-severity violations (warnings are allowed). Exit 1: any error,
 # or kicad-cli itself failed. Needs: KiCad 10 Flatpak (org.kicad.KiCad), jq.
 set -euo pipefail
@@ -84,6 +84,7 @@ for b in "${boards[@]}"; do
 
   kicad sch export bom -o "$out/bom.csv" "$sch" || ok=0
   kicad sch export netlist -o "$out/netlist.net" "$sch" || ok=0
+  kicad sch export pdf -o "$out/$(basename "$base").pdf" "$sch" || ok=0
   echo "   reports: ${out#"$PCB_DIR/"}/"
 
   [[ $ok -eq 1 ]] || fail=1
