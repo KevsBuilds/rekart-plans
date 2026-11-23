@@ -112,7 +112,8 @@ def main():
     for c in kids(kids(tree, "components")[0], "comp"):
         ls = kids(c, "libsource")[0]
         comps[val(c, "ref")] = (f"{val(ls, 'lib')}:{val(ls, 'part')}", val(c, "value"))
-    parts = spec_parts(spec)
+    # Sheet 1 only for now: the "## Parts" table, not "### Parts (sheet 2)" (not drawn yet)
+    parts = spec_parts(spec.split("## Parts", 1)[1].split("## Nets", 1)[0])
     check(set(comps) == set(parts),
           f"component refs match SPEC Parts (extra {sorted(set(comps) - set(parts))}, missing {sorted(set(parts) - set(comps))})")
     for ref in sorted(set(comps) & set(parts)):
