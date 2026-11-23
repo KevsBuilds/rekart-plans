@@ -1,13 +1,13 @@
-# ELEC-control-board — Sheet 1 spec (Power + Hoverboard Bus)
+# ELEC-control-board — spec (sheet 1: power + hoverboard bus; sheet 2: controls + sensors + screen)
 
-ReKart main controller carrier board. KiCad 10 (Flatpak on the OptiPlex). Sheet 1 only: power, battery sense, hoverboard bus.
+ReKart main controller carrier board. KiCad 10 (Flatpak on the OptiPlex). Sheet 1: power, battery sense, hoverboard bus. Sheet 2 (`controls.kicad_sch`): pedals, AS5600, screen, wheel controls, TF-Luna.
 Bus wiring copies the bench setup that passed on Nov 18/20 (`esp32/bench-keyboard`). Do not "improve" it.
 
 ## Rules
 - Draw/edit KiCad on the OptiPlex only. Close the schematic in KiCad before Claude Code edits the file.
 - ERC must be 0 errors after every change: `kicad-cli sch erc ELEC-control-board.kicad_sch`
 - Board 5 V (J5/J6 pin 4) never connects to the ESP32. Never power the ESP32 from a hoverboard board.
-- Skip on sheet 1: pedals, AS5600, screen, buttons (sheet 2), footprints, layout. Layout only after the circuit is proven; PCBWay order by Feb 15.
+- Not yet: footprints, layout. Layout only after the circuit is proven; PCBWay order by Feb 15.
 
 ## Battery (decided)
 - Bioenno BLF-3650AS, 36 V LiFePO4 12S: 43.8 V full, 38.4 V nominal. Sponsored by Bioenno Power. Replaces the 10S Li-ion (42 V).
