@@ -82,7 +82,7 @@ EXPECTED = {
     "LCD_BL": ["J10.8", "R12.2"],
     "LCD_BL_IO": ["R12.1"],
     "SPI_MISO": ["J10.9"],
-    "SD_CS": ["J10.10"],
+    "SD_CS": ["J10.14"],
     # Wheel controls
     "ESTOP": ["J11.1", "R13.2", "C6.1"],
     "MODE": ["J11.2", "R14.2", "C7.1"],

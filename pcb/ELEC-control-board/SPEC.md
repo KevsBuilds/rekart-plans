@@ -47,6 +47,7 @@ KiCad diodes: pin 1 = K (band), pin 2 = A. C_Polarized: pin 1 = +.
 
 ## Nets
 Power
+- J3 sheet note: "Battery feed is ~1.5 m: inline 1 A fuse rated >= 58 V DC at the pack end, next to the main fuse."
 - J3.1 -> F1 -> D2 (A->K) -> +BATT. J3.2 -> GND.
 - C1 + to +BATT, - to GND.
 - J4.1 VIN+ = +BATT; J4.2 VIN- = GND; J4.3 VOUT+ = +5V; J4.4 VOUT- = GND.
@@ -77,7 +78,7 @@ Same rules as sheet 1: label-based, short stubs, ERC 0. TBD items are marked; do
 | J7 | Connector_Generic:Conn_01x03 | PEDAL_THR (JST-XH 3) |
 | J8 | Connector_Generic:Conn_01x03 | PEDAL_BRK (JST-XH 3) |
 | J9 | Connector_Generic:Conn_01x04 | AS5600 (JST-XH 4) |
-| J10 | Connector_Generic:Conn_01x10 | LCD_ST7796S (1x10) |
+| J10 | Connector_Generic:Conn_01x14 | LCD_MSP3525 (1x14, 2.54 mm, module pin order) |
 | J11 | Connector_Generic:Conn_01x06 | WHEEL_CTRL (JST-XH 6) |
 | J12 | Connector_Generic:Conn_01x04 | TF_LUNA (JST-XH 4) |
 | R5, R7 | Device:R | 10k, 10k |
@@ -85,7 +86,7 @@ Same rules as sheet 1: label-based, short stubs, ERC 0. TBD items are marked; do
 | C4, C5 | Device:C | 100n, 100n |
 | R9, R10 | Device:R | 4.7k, 4.7k |
 | JP2 | Jumper:Jumper_2_Bridged | I2C_PU (remove if the AS5600 breakout has its own pull-ups) |
-| JP3 | Jumper:Jumper_3_Bridged12 | LCD_VCC_SEL (1-2 = 3V3 default; 2-3 = 5V only if the module has an onboard regulator) |
+| JP3 | Jumper:Jumper_3_Bridged23 | LCD_VCC_SEL (2-3 = 5V default; 1-2 = 3V3) |
 | R11 | Device:R | 10k |
 | R12 | Device:R | 100 |
 | R13, R14, R15 | Device:R | 10k, 10k, 10k |
@@ -95,23 +96,25 @@ Same rules as sheet 1: label-based, short stubs, ERC 0. TBD items are marked; do
 | R18 | Device:R | 10k |
 | C9 | Device:C | 1u |
 
+JP3 symbol is a local copy of Jumper_3_Bridged12 with the bridge on 2-3 (KiCad has no Bridged23); ERC warns "not found in library" for it.
+
 ### Nets (sheet 2)
-Pedals (part TBD; assume 5 V supply, 0.8-4.2 V out). Divider 10k/12k: 0.8 V -> 0.44 V, 4.2 V -> 2.29 V, short to 5 V -> 2.73 V.
+Pedals (decided: two identical generic 3-wire hall foot throttles, 5 V in, 0.8-4.2 V out; cables 30-50 cm). Divider 10k/12k: 0.8 V -> 0.44 V, 4.2 V -> 2.29 V, short to 5 V -> 2.73 V.
 - J7: 1 = +5V, 2 = GND, 3 = THR_SIG. THR_SIG -> R5 (10k) -> THR_ADC; R6 (12k) THR_ADC -> GND; C4 THR_ADC -> GND; THR_ADC -> GPIO32.
 - J8: 1 = +5V, 2 = GND, 3 = BRK_SIG. BRK_SIG -> R7 (10k) -> BRK_ADC; R8 (12k) BRK_ADC -> GND; C5 BRK_ADC -> GND; BRK_ADC -> GPIO33.
 - No extra pull-down: the 12k bottom resistor pulls a cut signal wire to 0 V.
 - Firmware fault window (after the divider): < 0.30 V or > 2.45 V -> stop.
 
-Steering (AS5600 breakout on the column; cable length TBD, assume up to ~1 m; I2C 100 kHz)
+Steering (AS5600 breakout on the column; cable ~30 cm, keep the 4.7k pull-ups; I2C 100 kHz)
 - J9: 1 = +3V3, 2 = GND, 3 = I2C_SDA (GPIO21), 4 = I2C_SCL (GPIO22).
 - +3V3 -> JP2 -> I2C_PU; R9 (4.7k) I2C_PU -> I2C_SDA; R10 (4.7k) I2C_PU -> I2C_SCL. Pull JP2 if the breakout already has pull-ups.
 
-Screen (3.5 in IPS ST7796S SPI, no touch, microSD; exact module TBD; cable < 40 cm, SPI <= 20 MHz)
-- J10: 1 = LCD_VCC, 2 = GND, 3 = LCD_CS (GPIO5), 4 = LCD_RST, 5 = LCD_DC (GPIO4), 6 = SPI_MOSI (GPIO23), 7 = SPI_SCK (GPIO18), 8 = LCD_BL, 9 = SPI_MISO (GPIO19), 10 = SD_CS (GPIO25).
-- JP3: 1 = +3V3, 2 = LCD_VCC, 3 = +5V. Default 1-2 (3V3).
+Screen (decided: LCDwiki MSP3525, 3.5 in IPS ST7796S SPI, no touch, microSD; cable < 40 cm, SPI <= 20 MHz)
+- J10 (MSP3525 order): 1 = LCD_VCC, 2 = GND, 3 = LCD_CS (GPIO5), 4 = LCD_RST, 5 = LCD_DC (GPIO4), 6 = SPI_MOSI (GPIO23), 7 = SPI_SCK (GPIO18), 8 = LCD_BL (LED), 9 = SPI_MISO (GPIO19), 10-13 = touch pins, no-connect flags, 14 = SD_CS (GPIO25).
+- JP3: 1 = +3V3, 2 = LCD_VCC, 3 = +5V. Default 2-3 (5V): the module has its own regulator, so the backlight (~95 mA) stays off the ESP32 3V3 rail.
 - R11 (10k) LCD_CS -> +3V3 (GPIO5 is a strapping pin, must be high at boot).
 - LCD_RST: R18 (10k) LCD_RST -> +3V3; C9 (1u) LCD_RST -> GND (power-on reset, ~10 ms) -> J10.4. No GPIO, and never the ESP32 EN pin: the RST wire runs ~40 cm through the coiled wheel cable near the motor wires, and noise on EN would reset the ESP32 while driving. J1.2 (EN) stays no-connect. Sheet note: "TFT_eSPI: TFT_RST = -1 (software reset)".
-- GPIO13 = LCD_BL_IO -> R12 (100) -> LCD_BL. Assumes the module has its own backlight transistor. Sheet note: "If the module has no BL transistor, add a BS170 low-side switch before ordering."
+- GPIO13 = LCD_BL_IO -> R12 (100) -> LCD_BL. The module switches the backlight itself (LED pin may be left open); verify polarity on arrival. Sheet note: "MSP3525 switches its backlight itself (LED pin may be left open); check polarity on arrival."
 
 Wheel controls (from steering-wheel.md; all switch to GND)
 - J11: 1 = ESTOP, 2 = MODE, 3 = DIR, 4 = GND, 5 = GND, 6 = spare (no-connect).
@@ -127,9 +130,9 @@ TF-Luna (auto braking, decided Nov 16; nose mount, ~1 m+ cable; UART, sensor str
 Not on this board: wireless kill switch (remote + separate XIAO cut-off board at the contactor, v2), power switch and main 30 A fuse (all before J3).
 
 ### Sheet 2 open questions
-- A. TBD: pedal part, AS5600 cable length, screen module (check for a BL transistor, VCC range, and whether the ST7796S releases MISO when its CS is high, or the SD card can't share SPI_MISO).
+- A. ~~Pedal part, AS5600 cable, screen module~~ **Decided Nov 22:** screen = LCDwiki MSP3525 (J10 1x14, touch pins NC); pedals = two identical generic 3-wire hall foot throttles (J7/J8 order +5V, GND, SIG, divider 10k/12k unchanged); board in the electronics box at the base of the steering column. Cables: screen < 40 cm, AS5600 ~30 cm, pedals 30-50 cm, TF-Luna 50-70 cm, hoverboard bus ~1.3-1.6 m (< 2 m limit). Still to verify on arrival: MISO release when CS is high (SD sharing), backlight polarity.
 - B. ~~GPIO39 errata~~ **Decided Nov 22: swapped.** ESP32 erratum: GPIO36/39 get ~80 ns low glitches while the ADC or Wi-Fi/ESP-NOW is active, which can corrupt UART bytes. TF-Luna RX moved to GPIO35; the mode button moved to GPIO39 (a debounced button doesn't care).
-- C. 3V3 budget: with JP3 on 3V3, the screen (backlight from VCC on most modules) and the microSD card run from the Freenove board's 3V3 regulator, on top of the ESP32's Wi-Fi peaks. Check the module's VCC current and the regulator rating before choosing 3V3 or 5V.
+- C. ~~3V3 budget~~ **Decided Nov 22:** JP3 default = 5V (module has its own regulator); backlight ~95 mA is off the Freenove 3V3 regulator.
 
 ## Open questions
 1. Passed Nov 21: bus with only GND + HB_5V between boards, 0 bad frames on both ids over ~3,900 frames (24 V bench supply). Master 78M05 output 4.9 V, link pin 4 5.0 V, 0.01 V between them under power (direct trace).
