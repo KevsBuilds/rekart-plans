@@ -5,6 +5,7 @@
 #   no argument: every pcb/*/ folder that has a .kicad_pro
 #   board-dir:   a path, or just the folder name under pcb/ (e.g. ELEC-control-board)
 #
+# DRC is skipped (shown as "-") while the .kicad_pcb has no Edge.Cuts outline.
 # Writes <board>/reports/{erc,drc}.{json,rpt}, bom.csv, netlist.net, <board>.pdf (git-ignored).
 # Exit 0: no error-severity violations (warnings are allowed). Exit 1: any error,
 # or kicad-cli itself failed. Needs: KiCad 10 Flatpak (org.kicad.KiCad), jq.
@@ -75,7 +76,9 @@ for b in "${boards[@]}"; do
   erc_w="$(jq "$ERC_WARN" "$out/erc.json" 2>/dev/null || echo '?')"
 
   drc_e="-"; drc_w="-"
-  if [[ -f "$pcb" ]]; then
+  if [[ -f "$pcb" ]] && ! grep -q '(layer "Edge.Cuts")' "$pcb"; then
+    echo "   DRC skipped: no board outline (Edge.Cuts) yet"   # layout not started
+  elif [[ -f "$pcb" ]]; then
     kicad pcb drc --format json --severity-all --schematic-parity --exit-code-violations -o "$out/drc.json" "$pcb" || ok=0
     kicad pcb drc --format report --severity-all --schematic-parity -o "$out/drc.rpt" "$pcb" || ok=0
     drc_e="$(jq "$DRC_ERR" "$out/drc.json" 2>/dev/null || echo '?')"
