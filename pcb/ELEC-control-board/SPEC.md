@@ -44,7 +44,7 @@ Bioenno BLF-3650AS, sponsored by Bioenno Power. Replaces the 10S Li-ion (42 V). 
 - LiFePO4 voltage is flat until nearly empty, so pack voltage is only a coarse fuel gauge. Low-battery limits (ESP32) stay estimates: warn 37.2 V, limp 36.0 V, stop 34.8 V. Firmware board levels match (see Known firmware limits).
 - Battery sense unchanged (R1 100k / R2 5.6k): 43.8 V still reads 2.32 V. No schematic change.
 - **Arrival test:** label shows 43.8 V charge voltage (confirms 12S) and the capacity (50 Ah vs 20 Ah); measure the terminal bolt size. Battery bench items stay on hold until it passes (see Bench results).
-- Regen / charge-current limit from motor braking: not published. Open question 4.
+- Regen / charge-current limit from motor braking: not published (see open question 4 for the mitigation).
 
 ## ESP32
 - Freenove ESP32-WROVER on 2 x `Connector:Conn_01x20_Socket` (J1 left, J2 right; pin 1 = antenna end). Header row spacing (J1 to J2, pin center to center): measured 25.3 mm (calipers Nov 21: outer edges 26.0, inner edges 24.6) = 25.4 mm (1.000 in, 10 x 2.54) for the footprint.
@@ -167,7 +167,7 @@ Not on this board: wireless kill switch (remote + separate XIAO cut-off board at
 1. Passed Nov 21: bus with only GND + HB_5V between boards, 0 bad frames on both ids over ~3,900 frames (24 V bench supply). Master 78M05 output 4.9 V, link pin 4 5.0 V, 0.01 V between them under power (direct trace).
 2. ~~Freenove board: does it have a diode between USB VBUS and the 5V pin?~~ **Answered Nov 21: no diode.** USB-C VBUS to the 5V header pin reads 0 both ways in diode mode (direct connection). JP1 stays; pull it before plugging in USB, or USB 5 V and the buck's +5V are tied together.
 3. HB_5V sags from 4.7 V to 4.1 V with the Gyroor slave's logic on it (about 20 mA extra; bench Nov 21). The slave's 3V3 still holds at 3.3 V. Find what's in series between the master's 5 V regulator and link pin 4 before the PCB order (Feb 15). On hold: re-check on the battery once the pack is decided and passes its arrival test (see Bench results).
-4. **Ask Bioenno:** the BLF-3650AS BMS limit for charge current from motor regen braking (not in the manual or on the product page), and whether a regen spike that hits the BMS charge cut-off opens the pack while driving. Until answered, keep regen gentle.
+4. **Regen charge-current limit: not published, and there is no Bioenno contact, so it stays unknown.** Mitigation: a deceleration ramp limits regen, and the ESP32 logs the master's bus-reply voltage on hard stops and flags anything > 46 V (50 V caps on the hoverboard boards).
 
 ## Known firmware limits
 Gen2.x fork `rekart-firmware`, branch `gyroor-ol20180703` (master 2.2.20.1, slave HY-A02 2.1.28.1). Design around these:
