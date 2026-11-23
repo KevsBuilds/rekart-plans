@@ -18,7 +18,7 @@ Bus wiring copies the bench setup that passed on Nov 18/20 (`esp32/bench-keyboar
 
 ## ESP32
 - Freenove ESP32-WROVER on 2 x `Connector:Conn_01x20_Socket` (J1 left, J2 right; pin 1 = antenna end). Header row spacing (J1 to J2, pin center to center): measured 25.3 mm (calipers Nov 21: outer edges 26.0, inner edges 24.6) = 25.4 mm (1.000 in, 10 x 2.54) for the footprint.
-- In use: GPIO27 = bus TX, GPIO26 = bus RX, GPIO36 = battery sense. Sheet 2: pedals 32/33, AS5600 I2C 21/22, screen SPI 18/23/19 + CS 5, DC 4, BL 13, SD CS 25, wheel controls 34/35/14, TF-Luna 39. Every free GPIO is now used (no spare).
+- In use: GPIO27 = bus TX, GPIO26 = bus RX, GPIO36 = battery sense. Sheet 2: pedals 32/33, AS5600 I2C 21/22, screen SPI 18/23/19 + CS 5, DC 4, BL 13, SD CS 25, wheel controls 34 (E-stop) / 39 (mode) / 14 (dir), TF-Luna 35. Every free GPIO is now used (no spare).
 - Avoid 0, 2, 12, 15, 16, 17 (16/17 = PSRAM). Camera connector stays unplugged (shares 26/27 and others).
 - Unused socket pins get a no-connect (X) until sheet 2 uses them. Write the silkscreen name of every socket pin in a text box on the sheet.
 
@@ -116,19 +116,19 @@ Screen (3.5 in IPS ST7796S SPI, no touch, microSD; exact module TBD; cable < 40 
 Wheel controls (from steering-wheel.md; all switch to GND)
 - J11: 1 = ESTOP, 2 = MODE, 3 = DIR, 4 = GND, 5 = GND, 6 = spare (no-connect).
 - E-stop, 19 mm latching, normally closed: ESTOP -> GPIO34; R13 (10k) ESTOP -> +3V3; C6 ESTOP -> GND. Normal running reads LOW; pressed OR cable cut -> HIGH -> stop.
-- Mode, momentary: MODE -> GPIO35; R14 (10k) MODE -> +3V3; C7 MODE -> GND.
+- Mode, momentary: MODE -> GPIO39; R14 (10k) MODE -> +3V3; C7 MODE -> GND.
 - Fwd/rev toggle: DIR (switch side) -> R16 (1k) -> DIR_IO -> GPIO14 (GPIO14 outputs PWM at boot; the 1k limits it into a closed switch). R15 (10k) DIR -> +3V3; C8 DIR -> GND (both on the switch side).
 - The wheel e-stop is a signal only. It never switches pack current.
 
 TF-Luna (auto braking, decided Nov 16; nose mount, ~1 m+ cable; UART, sensor streams at 100 Hz)
 - J12: 1 = +5V, 2 = GND, 3 = TF_TX (sensor TX), 4 = TF_RX (sensor RX: keep the pin; no-connect flag on J12.4, not a label, so ERC has no single-pin net).
-- TF_TX -> R17 (1k) -> TF_RX_IO -> GPIO39. No ESP32 TX to the sensor. The sensor's config pin stays unconnected (UART mode); it is not on J12.
+- TF_TX -> R17 (1k) -> TF_RX_IO -> GPIO35 (not GPIO39: see B). No ESP32 TX to the sensor. The sensor's config pin stays unconnected (UART mode); it is not on J12.
 
 Not on this board: wireless kill switch (remote + separate XIAO cut-off board at the contactor, v2), power switch and main 30 A fuse (all before J3).
 
 ### Sheet 2 open questions
 - A. TBD: pedal part, AS5600 cable length, screen module (check for a BL transistor, VCC range, and whether the ST7796S releases MISO when its CS is high, or the SD card can't share SPI_MISO).
-- B. GPIO39 errata: GPIO36/39 can see a ~80 ns low glitch when the SAR ADC or Wi-Fi powers up. The ADC runs constantly (pedals, battery sense) and GPIO39 is the TF-Luna RX (auto braking). TF-Luna frames have a checksum, so the firmware can drop bad frames, but they count as lost frames. Option: swap MODE and TF (TF_RX_IO -> GPIO35, MODE -> GPIO39; a debounced button ignores the glitch). Not decided.
+- B. ~~GPIO39 errata~~ **Decided Nov 22: swapped.** ESP32 erratum: GPIO36/39 get ~80 ns low glitches while the ADC or Wi-Fi/ESP-NOW is active, which can corrupt UART bytes. TF-Luna RX moved to GPIO35; the mode button moved to GPIO39 (a debounced button doesn't care).
 - C. 3V3 budget: with JP3 on 3V3, the screen (backlight from VCC on most modules) and the microSD card run from the Freenove board's 3V3 regulator, on top of the ESP32's Wi-Fi peaks. Check the module's VCC current and the regulator rating before choosing 3V3 or 5V.
 
 ## Open questions
