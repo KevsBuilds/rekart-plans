@@ -7,7 +7,17 @@ Bus wiring copies the bench setup that passed on Nov 18/20 (`esp32/bench-keyboar
 - Draw/edit KiCad on the OptiPlex only. Close the schematic in KiCad before Claude Code edits the file.
 - ERC must be 0 errors after every change: `kicad-cli sch erc ELEC-control-board.kicad_sch`
 - Board 5 V (J5/J6 pin 4) never connects to the ESP32. Never power the ESP32 from a hoverboard board.
-- Not yet: footprints, layout. Layout only after the circuit is proven; PCBWay order by Feb 15.
+- Not yet: footprints, layout (package family decided: THT, see Assembly). Layout only after the circuit is proven; PCBWay order by Feb 15.
+
+## Assembly: through-hole (decided Nov 22)
+All parts are through-hole (THT). Footprints are not assigned yet; this only fixes the package family.
+1. Hand soldering with an iron, bare boards only (PCBWay free boards, no assembly): THT is the easiest to place and solder by hand, and the joints are easy to inspect by eye.
+2. Perfboard v1 uses the same parts: perfboard is 2.54 mm THT, so one THT parts order covers both boards. With SMD you would need two orders or adapter boards.
+3. Bench rework: THT parts can be desoldered with a pump or wick, legs can be clipped and lifted, and you can tack a bodge wire onto a lead. Small SMD (0603/0805) is harder to swap without hot air.
+4. Vibration: neutral to slightly in favour of THT. Small SMD R/C parts handle vibration fine. The heavy parts (C1, C2, connectors, sockets) are THT either way, and those are the ones at risk. Hot glue or RTV on C1/C2 and strain relief on cables matter more than the choice of package.
+5. Size: SMD would not shrink the board. The size is set by the ESP32 sockets (2 x 1x20, 25.4 mm apart), 12 connectors, the buck module footprint and C1/C2. The ~30 R/C/D parts fit between them as THT.
+
+Parts with no reasonable THT option: none. R, C (ceramic + electrolytic), 1N4007/1N4148, the fuse (5x20 clip holder or radial TR5), JST-XH, pin headers, sockets and jumpers (header + shunt) all come in THT. The AS5600 is off-board on its own breakout; the buck converter is a module.
 
 ## Battery (decided)
 - Bioenno BLF-3650AS, 36 V LiFePO4 12S: 43.8 V full, 38.4 V nominal. Sponsored by Bioenno Power. Replaces the 10S Li-ion (42 V).
