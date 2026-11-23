@@ -17,14 +17,14 @@ All parts are through-hole (THT). Footprints are not assigned yet; this only fix
 4. Vibration: neutral to slightly in favour of THT. Small SMD R/C parts handle vibration fine. The heavy parts (C1, C2, connectors, sockets) are THT either way, and those are the ones at risk. Hot glue or RTV on C1/C2 and strain relief on cables matter more than the choice of package.
 5. Size: SMD would not shrink the board. The size is set by the ESP32 sockets (2 x 1x20, 25.4 mm apart), 12 connectors, the buck module footprint and C1/C2. The ~30 R/C/D parts fit between them as THT.
 
-Parts with no reasonable THT option: none. R, C (ceramic + electrolytic), 1N4007/1N4148, the fuse (5x20 clip holder or radial TR5), JST-XH, pin headers, sockets and jumpers (header + shunt) all come in THT. The AS5600 is off-board on its own breakout; the buck converter is a module.
+Parts with no reasonable THT option: none. R, C (ceramic + electrolytic), 1N4007/1N4148, JST-XH, pin headers, sockets and jumpers (header + shunt) all come in THT. The AS5600 is off-board on its own breakout; the buck converter is a module.
 
-F1 rule (footprint step): first find a specific 1 A fuse whose datasheet gives a DC voltage rating >= 60 V. An AC-only rating (e.g. 250 V AC, common on 5x20 glass and TR5 fuses) does not count for a battery. Then pick the holder that fits that fuse.
-
-F1 part (chosen Nov 22): **Eaton Bussmann S505H-1-R** (DigiKey/Mouser BK1-S505H-1-R): 5x20 mm ceramic, time-delay, 1 A, 600 V AC, **400 V DC, 1500 A interrupting at 400 V DC** (capacitor-bank test); 1500 A @ 250 V AC, 100 A @ 600 V AC. Source: Eaton data sheet 4406 "S505H 400Vdc/500-600Vac time-delay 5x20mm fuses" (https://www.eaton.com/content/dam/eaton/products/electronic-components/resources/data-sheet/eaton-s505h-vac-time-delay-fuses-data-sheet.pdf). Checked Nov 22 against a screenshot of the PDF that Kevin sent (Technical Data 4406, effective June 2023, Product specifications table, row S505H(-V)-1-R). Order the cartridge S505H-1-R; the -V suffix is the axial-lead version.
-- Why this one: a DC rating 6x above 60 V, ceramic body (high breaking capacity; glass is for low-energy circuits), and time-delay, so C1 charging at plug-in doesn't blow it. Alternative with the same ratings: Littelfuse 0477001.MXP (477 series, 500 V AC / 400 V DC).
-- Holder: any standard 5x20 holder fits. Choose at the footprint step (KiCad has e.g. `Fuse:Fuseholder_Clip-5x20mm_Keystone_3517_Inline_P23.11x6.76mm_D1.70mm_Horizontal`, `Fuse:Fuseholder_Cylinder-5x20mm_Schurter_FAB_0031-355x_Horizontal_Closed`). For kart vibration, prefer a closed holder or clips with end stops.
-- The inline 1 A fuse at the pack end (J3 note) follows the same rule: >= 60 V DC on its datasheet. The same S505H-1-R in an inline 5x20 holder works; check the holder's own voltage rating too (many automotive inline holders are 32 V).
+## Battery feed fuse (decided Nov 22)
+No fuse on the board (F1 removed). The only 1 A fuse is inline at the pack end, next to the main 30 A fuse:
+- Holder: **Littelfuse 01500520H** inline 5x20 holder (600 V AC/DC, 20 A, 14 AWG leads).
+- Fuse: **Eaton Bussmann S505H-1-R** (DigiKey/Mouser BK1-S505H-1-R): 5x20 mm ceramic, time-delay, 1 A, 600 V AC / **400 V DC, 1500 A interrupting at 400 V DC** (capacitor-bank test). Source: Eaton Technical Data 4406, effective June 2023, Product specifications table, row S505H(-V)-1-R (https://www.eaton.com/content/dam/eaton/products/electronic-components/resources/data-sheet/eaton-s505h-vac-time-delay-fuses-data-sheet.pdf); checked Nov 22 against a screenshot of the PDF. Order the cartridge S505H-1-R; -V is the axial-lead version.
+- Why one fuse, at the pack end: two 1 A fuses in series on the same branch are redundant, and only the pack-end fuse protects the ~1.5 m feed wire to J3.
+- Rule for any replacement: the fuse's datasheet must give a DC rating >= 60 V (an AC-only rating such as 250 V AC does not count for a battery), and the holder needs its own DC rating too. Time-delay, so C1 charging at plug-in doesn't blow it.
 
 ## Battery (decided)
 - Bioenno BLF-3650AS, 36 V LiFePO4 12S: 43.8 V full, 38.4 V nominal. Sponsored by Bioenno Power. Replaces the 10S Li-ion (42 V).
@@ -47,7 +47,6 @@ F1 part (chosen Nov 22): **Eaton Bussmann S505H-1-R** (DigiKey/Mouser BK1-S505H-
 | J4 | Connector_Generic:Conn_01x04 | BUCK_60V_5V (LM2596HV / XL7015 class, >= 60 V in) |
 | J5 | Connector_Generic:Conn_01x04 | HB_MASTER (JST-XH 4) |
 | J6 | Connector_Generic:Conn_01x04 | HB_SLAVE (JST-XH 4) |
-| F1 | Device:Fuse | 1A T 400VDC (Eaton Bussmann S505H-1-R, 5x20 ceramic; see F1 rule) |
 | D2 | Diode:1N4007 | 1N4007 (reverse polarity) |
 | D1 | Diode:1N4148 | 1N4148 |
 | C1 | Device:C_Polarized | 100u/63V |
@@ -64,8 +63,8 @@ KiCad diodes: pin 1 = K (band), pin 2 = A. C_Polarized: pin 1 = +.
 
 ## Nets
 Power
-- J3 sheet note: "Battery feed is ~1.5 m: inline 1 A fuse rated >= 58 V DC at the pack end, next to the main fuse."
-- J3.1 -> F1 -> D2 (A->K) -> +BATT. J3.2 -> GND.
+- J3 sheet note: "Battery feed fuse: Littelfuse 01500520H inline holder + Bussmann S505H-1-R (1 A), at the pack end next to the main 30 A fuse."
+- J3.1 -> D2 (A->K) -> +BATT (direct trace, no on-board fuse). J3.2 -> GND.
 - C1 + to +BATT, - to GND.
 - J4.1 VIN+ = +BATT; J4.2 VIN- = GND; J4.3 VOUT+ = +5V; J4.4 VOUT- = GND.
 - C2 + to +5V, - to GND.
@@ -144,7 +143,7 @@ TF-Luna (auto braking, decided Nov 16; nose mount, ~1 m+ cable; UART, sensor str
 - J12: 1 = +5V, 2 = GND, 3 = TF_TX (sensor TX), 4 = TF_RX (sensor RX: keep the pin; no-connect flag on J12.4, not a label, so ERC has no single-pin net).
 - TF_TX -> R17 (1k) -> TF_RX_IO -> GPIO35 (not GPIO39: see B). No ESP32 TX to the sensor. The sensor's config pin stays unconnected (UART mode); it is not on J12.
 
-Not on this board: wireless kill switch (remote + separate XIAO cut-off board at the contactor, v2), power switch and main 30 A fuse (all before J3).
+Not on this board: wireless kill switch (remote + separate XIAO cut-off board at the contactor, v2), power switch, main 30 A fuse and the 1 A battery-feed fuse (all before J3).
 
 ### Sheet 2 open questions
 - A. ~~Pedal part, AS5600 cable, screen module~~ **Decided Nov 22:** screen = LCDwiki MSP3525 (J10 1x14, touch pins NC); pedals = two identical generic 3-wire hall foot throttles (J7/J8 order +5V, GND, SIG, divider 10k/12k unchanged); board in the electronics box at the base of the steering column. Cables: screen < 40 cm, AS5600 ~30 cm, pedals 30-50 cm, TF-Luna 50-70 cm, hoverboard bus ~1.3-1.6 m (< 2 m limit). Still to verify on arrival: MISO release when CS is high (SD sharing), backlight polarity.

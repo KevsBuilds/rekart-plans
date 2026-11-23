@@ -100,8 +100,8 @@ NC_PINS = ESP32_NC + ["J11.6", "J12.4"]
 for net, pins in ESP32_PINS.items():
     EXPECTED[net] = EXPECTED[net] + pins
 
-# Unnamed nets in the series chain J3.1 -> F1 -> D2 (A->K) -> +BATT
-UNNAMED = [{"J3.1", "F1.1"}, {"F1.2", "D2.2"}]
+# Unnamed net J3.1 -> D2 anode (no on-board fuse: the 1 A fuse is inline at the pack end)
+UNNAMED = [{"J3.1", "D2.2"}]
 
 
 def parse(text):
@@ -209,8 +209,8 @@ def main():
     check(not ({"J5.4", "J6.4"} & set().union(*(nets.get(k, set()) for k in ("+5V", "ESP_5V", "+3V3")))),
           "J5.4/J6.4 not on +5V/ESP_5V/+3V3")
     check("D1.1" in nets.get("S_PA2", set()), "D1 pin 1 (K) on S_PA2")
-    check(any(p == {"D2.2", "F1.2"} for p in nets.values()),
-          "D2 anode (pin 2) on the J3/F1 side")
+    check(any(p == {"D2.2", "J3.1"} for p in nets.values()),
+          "D2 anode (pin 2) directly on J3.1")
     check("D2.1" in nets.get("+BATT", set()), "D2 cathode (pin 1) on +BATT")
     r4 = {n for n, p in nets.items() if p & {"R4.1", "R4.2"}}
     check(r4 == {"BUS_RX", "+3V3"}, f"R4 between BUS_RX and +3V3 (got {sorted(r4)})")
