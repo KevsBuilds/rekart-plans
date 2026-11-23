@@ -18,7 +18,7 @@ Bus wiring copies the bench setup that passed on Nov 18/20 (`esp32/bench-keyboar
 
 ## ESP32
 - Freenove ESP32-WROVER on 2 x `Connector:Conn_01x20_Socket` (J1 left, J2 right; pin 1 = antenna end). Header row spacing (J1 to J2, pin center to center): measured 25.3 mm (calipers Nov 21: outer edges 26.0, inner edges 24.6) = 25.4 mm (1.000 in, 10 x 2.54) for the footprint.
-- In use: GPIO27 = bus TX, GPIO26 = bus RX, GPIO36 = battery sense. Sheet 2: pedals 32/33, AS5600 I2C 21/22, screen SPI 18/23/19 + CS 5, DC 4, BL 13, SD CS 25, screen RST = EN, wheel controls 34/35/14, TF-Luna 39. Every free GPIO is now used (no spare).
+- In use: GPIO27 = bus TX, GPIO26 = bus RX, GPIO36 = battery sense. Sheet 2: pedals 32/33, AS5600 I2C 21/22, screen SPI 18/23/19 + CS 5, DC 4, BL 13, SD CS 25, wheel controls 34/35/14, TF-Luna 39. Every free GPIO is now used (no spare).
 - Avoid 0, 2, 12, 15, 16, 17 (16/17 = PSRAM). Camera connector stays unplugged (shares 26/27 and others).
 - Unused socket pins get a no-connect (X) until sheet 2 uses them. Write the silkscreen name of every socket pin in a text box on the sheet.
 
@@ -92,6 +92,8 @@ Same rules as sheet 1: label-based, short stubs, ERC 0. TBD items are marked; do
 | R16 | Device:R | 1k |
 | C6, C7, C8 | Device:C | 100n, 100n, 100n |
 | R17 | Device:R | 1k |
+| R18 | Device:R | 10k |
+| C9 | Device:C | 1u |
 
 ### Nets (sheet 2)
 Pedals (part TBD; assume 5 V supply, 0.8-4.2 V out). Divider 10k/12k: 0.8 V -> 0.44 V, 4.2 V -> 2.29 V, short to 5 V -> 2.73 V.
@@ -105,9 +107,10 @@ Steering (AS5600 breakout on the column; cable length TBD, assume up to ~1 m; I2
 - +3V3 -> JP2 -> I2C_PU; R9 (4.7k) I2C_PU -> I2C_SDA; R10 (4.7k) I2C_PU -> I2C_SCL. Pull JP2 if the breakout already has pull-ups.
 
 Screen (3.5 in IPS ST7796S SPI, no touch, microSD; exact module TBD; cable < 40 cm, SPI <= 20 MHz)
-- J10: 1 = LCD_VCC, 2 = GND, 3 = LCD_CS (GPIO5), 4 = ESP_EN (ESP32 EN pin, J1.2), 5 = LCD_DC (GPIO4), 6 = SPI_MOSI (GPIO23), 7 = SPI_SCK (GPIO18), 8 = LCD_BL, 9 = SPI_MISO (GPIO19), 10 = SD_CS (GPIO25).
+- J10: 1 = LCD_VCC, 2 = GND, 3 = LCD_CS (GPIO5), 4 = LCD_RST, 5 = LCD_DC (GPIO4), 6 = SPI_MOSI (GPIO23), 7 = SPI_SCK (GPIO18), 8 = LCD_BL, 9 = SPI_MISO (GPIO19), 10 = SD_CS (GPIO25).
 - JP3: 1 = +3V3, 2 = LCD_VCC, 3 = +5V. Default 1-2 (3V3).
 - R11 (10k) LCD_CS -> +3V3 (GPIO5 is a strapping pin, must be high at boot).
+- LCD_RST: R18 (10k) LCD_RST -> +3V3; C9 (1u) LCD_RST -> GND (power-on reset, ~10 ms) -> J10.4. No GPIO, and never the ESP32 EN pin: the RST wire runs ~40 cm through the coiled wheel cable near the motor wires, and noise on EN would reset the ESP32 while driving. J1.2 (EN) stays no-connect. Sheet note: "TFT_eSPI: TFT_RST = -1 (software reset)".
 - GPIO13 = LCD_BL_IO -> R12 (100) -> LCD_BL. Assumes the module has its own backlight transistor. Sheet note: "If the module has no BL transistor, add a BS170 low-side switch before ordering."
 
 Wheel controls (from steering-wheel.md; all switch to GND)
@@ -118,7 +121,7 @@ Wheel controls (from steering-wheel.md; all switch to GND)
 - The wheel e-stop is a signal only. It never switches pack current.
 
 TF-Luna (auto braking, decided Nov 16; nose mount, ~1 m+ cable; UART, sensor streams at 100 Hz)
-- J12: 1 = +5V, 2 = GND, 3 = TF_TX (sensor TX), 4 = TF_RX (sensor RX: no-connect on the ESP32 side, keep the pin).
+- J12: 1 = +5V, 2 = GND, 3 = TF_TX (sensor TX), 4 = TF_RX (sensor RX: keep the pin; no-connect flag on J12.4, not a label, so ERC has no single-pin net).
 - TF_TX -> R17 (1k) -> TF_RX_IO -> GPIO39. No ESP32 TX to the sensor. The sensor's config pin stays unconnected (UART mode); it is not on J12.
 
 Not on this board: wireless kill switch (remote + separate XIAO cut-off board at the contactor, v2), power switch and main 30 A fuse (all before J3).
