@@ -2821,7 +2821,7 @@
 		)
 )
 (rectangle (start 15.24 22.86) (end 105.41 95.25) (stroke (width 0) (type dash)) (fill (type none)) (uuid "550e5e43-a61e-4219-9822-f430a33545db"))
-(text "Pedals (hall, part TBD: 5 V, 0.8-4.2 V out)" (exclude_from_sim no) (at 16.51 26.67 0) (effects (font (size 2.0 2.0) (bold yes)) (justify left bottom)) (uuid "9cf08cbf-e460-456a-85c0-5cc5b0bd0948"))
+(text "Pedals (2x generic 3-wire hall foot throttle: 5 V, 0.8-4.2 V out)" (exclude_from_sim no) (at 16.51 26.67 0) (effects (font (size 2.0 2.0) (bold yes)) (justify left bottom)) (uuid "9cf08cbf-e460-456a-85c0-5cc5b0bd0948"))
 (symbol (lib_id "Connector_Generic:Conn_01x03") (at 25.4 45.72 0) (mirror y) (unit 1) (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no) (uuid "6672e219-3a62-482b-9bbf-77f6b08a52b4")
 (property "Reference" "J7" (at 25.4 39.37 0) (effects (font (size 1.27 1.27))))
 (property "Value" "PEDAL_THR" (at 25.4 52.07 0) (effects (font (size 1.27 1.27))))
