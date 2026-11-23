@@ -21,7 +21,7 @@ Parts with no reasonable THT option: none. R, C (ceramic + electrolytic), 1N4007
 
 ## Battery feed fuse (decided Nov 22)
 No fuse on the board (F1 removed). The only 1 A fuse is inline at the pack end, next to the main 30 A fuse:
-- Holder: **Littelfuse 01500520H** inline 5x20 holder (600 V AC/DC, 20 A, 14 AWG leads).
+- Holder: **Littelfuse 01500520H** inline 5x20 holder (150520 series). Datasheet (rev GD 03/20/23, checked Nov 22): 600 VAC / VDC, 20 A, fuse type 5 x 20 mm, wire "14 AWG UL3321, XLPE Insulated, Red Color", eight-inch pre-stripped leads, -40 to 105 °C. The ordering table says "Wire Range AWG 16-22", which contradicts the 14 AWG line; measure the leads on arrival. The ~20 cm leads get spliced to the ~1.5 m feed wire (crimp butt splice + heat shrink).
 - Fuse: **Eaton Bussmann S505H-1-R** (DigiKey/Mouser BK1-S505H-1-R): 5x20 mm ceramic, time-delay, 1 A, 600 V AC / **400 V DC, 1500 A interrupting at 400 V DC** (capacitor-bank test). Source: Eaton Technical Data 4406, effective June 2023, Product specifications table, row S505H(-V)-1-R (https://www.eaton.com/content/dam/eaton/products/electronic-components/resources/data-sheet/eaton-s505h-vac-time-delay-fuses-data-sheet.pdf); checked Nov 22 against a screenshot of the PDF. Order the cartridge S505H-1-R; -V is the axial-lead version.
 - Why one fuse, at the pack end: two 1 A fuses in series on the same branch are redundant, and only the pack-end fuse protects the ~1.5 m feed wire to J3.
 - Rule for any replacement: the fuse's datasheet must give a DC rating >= 60 V (an AC-only rating such as 250 V AC does not count for a battery), and the holder needs its own DC rating too. Time-delay, so C1 charging at plug-in doesn't blow it.
