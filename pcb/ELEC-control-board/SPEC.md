@@ -21,6 +21,11 @@ Parts with no reasonable THT option: none. R, C (ceramic + electrolytic), 1N4007
 
 F1 rule (footprint step): first find a specific 1 A fuse whose datasheet gives a DC voltage rating >= 60 V. An AC-only rating (e.g. 250 V AC, common on 5x20 glass and TR5 fuses) does not count for a battery. Then pick the holder that fits that fuse.
 
+F1 part (chosen Nov 22): **Eaton Bussmann S505H-1-R** (DigiKey/Mouser BK1-S505H-1-R): 5x20 mm ceramic, time-delay, 1 A, 250/500-600 V AC, **400 V DC, 1500 A interrupting at 400 V DC** (capacitor-bank test). Source: Eaton data sheet 4406 "S505H 400Vdc/500-600Vac time-delay 5x20mm fuses" (https://www.eaton.com/content/dam/eaton/products/electronic-components/resources/data-sheet/eaton-s505h-vac-time-delay-fuses-data-sheet.pdf). Ratings were read from the data sheet's text via search, not from the PDF table by eye: check the 1 A row on the PDF before ordering.
+- Why this one: a DC rating 6x above 60 V, ceramic body (high breaking capacity; glass is for low-energy circuits), and time-delay, so C1 charging at plug-in doesn't blow it. Alternative with the same ratings: Littelfuse 0477001.MXP (477 series, 500 V AC / 400 V DC).
+- Holder: any standard 5x20 holder fits. Choose at the footprint step (KiCad has e.g. `Fuse:Fuseholder_Clip-5x20mm_Keystone_3517_Inline_P23.11x6.76mm_D1.70mm_Horizontal`, `Fuse:Fuseholder_Cylinder-5x20mm_Schurter_FAB_0031-355x_Horizontal_Closed`). For kart vibration, prefer a closed holder or clips with end stops.
+- The inline 1 A fuse at the pack end (J3 note) follows the same rule: >= 60 V DC on its datasheet. The same S505H-1-R in an inline 5x20 holder works; check the holder's own voltage rating too (many automotive inline holders are 32 V).
+
 ## Battery (decided)
 - Bioenno BLF-3650AS, 36 V LiFePO4 12S: 43.8 V full, 38.4 V nominal. Sponsored by Bioenno Power. Replaces the 10S Li-ion (42 V).
 - 43.8 V = 88% of the boards' 50 V caps. Charge only with a 43.8 V LiFePO4 charger (the Gyroor 42 V charger won't work).
@@ -42,7 +47,7 @@ F1 rule (footprint step): first find a specific 1 A fuse whose datasheet gives a
 | J4 | Connector_Generic:Conn_01x04 | BUCK_60V_5V (LM2596HV / XL7015 class, >= 60 V in) |
 | J5 | Connector_Generic:Conn_01x04 | HB_MASTER (JST-XH 4) |
 | J6 | Connector_Generic:Conn_01x04 | HB_SLAVE (JST-XH 4) |
-| F1 | Device:Fuse | 1A 60VDC (part TBD, >= 60 V DC rating; see F1 rule) |
+| F1 | Device:Fuse | 1A T 400VDC (Eaton Bussmann S505H-1-R, 5x20 ceramic; see F1 rule) |
 | D2 | Diode:1N4007 | 1N4007 (reverse polarity) |
 | D1 | Diode:1N4148 | 1N4148 |
 | C1 | Device:C_Polarized | 100u/63V |
