@@ -19,6 +19,8 @@ All parts are through-hole (THT). Footprints are not assigned yet; this only fix
 
 Parts with no reasonable THT option: none. R, C (ceramic + electrolytic), 1N4007/1N4148, the fuse (5x20 clip holder or radial TR5), JST-XH, pin headers, sockets and jumpers (header + shunt) all come in THT. The AS5600 is off-board on its own breakout; the buck converter is a module.
 
+F1 rule (footprint step): first find a specific 1 A fuse whose datasheet gives a DC voltage rating >= 60 V. An AC-only rating (e.g. 250 V AC, common on 5x20 glass and TR5 fuses) does not count for a battery. Then pick the holder that fits that fuse.
+
 ## Battery (decided)
 - Bioenno BLF-3650AS, 36 V LiFePO4 12S: 43.8 V full, 38.4 V nominal. Sponsored by Bioenno Power. Replaces the 10S Li-ion (42 V).
 - 43.8 V = 88% of the boards' 50 V caps. Charge only with a 43.8 V LiFePO4 charger (the Gyroor 42 V charger won't work).
@@ -40,7 +42,7 @@ Parts with no reasonable THT option: none. R, C (ceramic + electrolytic), 1N4007
 | J4 | Connector_Generic:Conn_01x04 | BUCK_60V_5V (LM2596HV / XL7015 class, >= 60 V in) |
 | J5 | Connector_Generic:Conn_01x04 | HB_MASTER (JST-XH 4) |
 | J6 | Connector_Generic:Conn_01x04 | HB_SLAVE (JST-XH 4) |
-| F1 | Device:Fuse | 1A 60VDC (part TBD, >= 60 V DC rating) |
+| F1 | Device:Fuse | 1A 60VDC (part TBD, >= 60 V DC rating; see F1 rule) |
 | D2 | Diode:1N4007 | 1N4007 (reverse polarity) |
 | D1 | Diode:1N4148 | 1N4148 |
 | C1 | Device:C_Polarized | 100u/63V |
