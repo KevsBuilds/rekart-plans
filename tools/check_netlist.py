@@ -30,7 +30,8 @@ ESP32_PINS = {
     "ESTOP": ["J1.5"],                                # GPIO34
     "TF_RX_IO": ["J1.6"],                             # GPIO35 (not 39: erratum)
     "THR_ADC": ["J1.7"],                              # GPIO32
-    "BRK_ADC": ["J1.8"],                              # GPIO33
+    "BRK_DT": ["J1.8"],                               # GPIO33 (HX711 DOUT)
+    "BRK_SCK": ["J2.16"],                             # GPIO15 (HX711 SCK)
     "SD_CS": ["J1.9"],                                # GPIO25
     "DIR_IO": ["J1.12"],                              # GPIO14
     "LCD_BL_IO": ["J1.15"],                           # GPIO13
@@ -41,9 +42,10 @@ ESP32_PINS = {
     "SPI_SCK": ["J2.9"],                              # GPIO18
     "LCD_CS": ["J2.10"],                              # GPIO5
     "LCD_DC": ["J2.13"],                              # GPIO4
+    "LED_IO": ["J2.15"],                              # GPIO2 (addressable LED data)
 }
 # ESP32 pins that must stay unconnected (EN never goes to the screen: SPEC sheet 2)
-ESP32_NC = ["J1.2", "J1.13", "J2.4", "J2.5", "J2.14", "J2.15", "J2.16"]
+ESP32_NC = ["J1.2", "J1.13", "J2.4", "J2.5", "J2.14"]
 
 # ---- SPEC.md "Nets", pin by pin ----
 # Diodes: pin 1 = K, pin 2 = A. C_Polarized: pin 1 = +.
@@ -63,11 +65,11 @@ EXPECTED = {
     "+3V3": ["R4.1"],
     "HB_5V": ["J5.4", "J6.4"],
     # ---- sheet 2 ----
-    # Pedals: divider 10k/12k, 100n
+    # Pedals: throttle divider 10k/12k + 100n; brake HX711 (3.3 V)
     "THR_SIG": ["J7.3", "R5.1"],
     "THR_ADC": ["R5.2", "R6.1", "C4.1"],
-    "BRK_SIG": ["J8.3", "R7.1"],
-    "BRK_ADC": ["R7.2", "R8.1", "C5.1"],
+    "BRK_DT": ["J8.3"],
+    "BRK_SCK": ["J8.4"],
     # Steering
     "I2C_PU": ["JP2.2", "R9.1", "R10.1"],
     "I2C_SDA": ["J9.3", "R9.2"],
@@ -91,11 +93,14 @@ EXPECTED = {
     # TF-Luna
     "TF_TX": ["J12.3", "R17.1"],
     "TF_RX_IO": ["R17.2"],
+    # LED strip
+    "LED_DATA": ["J13.2", "R19.1"],
+    "LED_IO": ["R19.2"],
 }
-EXPECTED["+5V"] += ["J7.1", "J8.1", "J12.1", "JP3.3"]
-EXPECTED["+3V3"] += ["J9.1", "JP2.1", "JP3.1", "R11.1", "R18.1", "R13.1", "R14.1", "R15.1"]
-EXPECTED["GND"] += ["J7.2", "J8.2", "R6.2", "C4.2", "R8.2", "C5.2", "J9.2", "J10.2", "C9.2",
-                    "J11.4", "J11.5", "C6.2", "C7.2", "C8.2", "J12.2"]
+EXPECTED["+5V"] += ["J7.1", "J12.1", "JP3.3"]
+EXPECTED["+3V3"] += ["J8.1", "J9.1", "JP2.1", "JP3.1", "R11.1", "R18.1", "R13.1", "R14.1", "R15.1"]
+EXPECTED["GND"] += ["J7.2", "J8.2", "R6.2", "C4.2", "J9.2", "J10.2", "C9.2",
+                    "J11.4", "J11.5", "C6.2", "C7.2", "C8.2", "J12.2", "J13.1"]
 NC_PINS = ESP32_NC + ["J11.6", "J12.4"]
 for net, pins in ESP32_PINS.items():
     EXPECTED[net] = EXPECTED[net] + pins
@@ -227,10 +232,19 @@ def main():
         got = {nm for nm, p in nets.items() if p & {f"{ref}.1", f"{ref}.2"}}
         check(got == {a, b}, f"{ref} between {a} and {b} (got {sorted(got)})")
     between("R5", "THR_SIG", "THR_ADC"); between("R6", "THR_ADC", "GND")
-    between("R7", "BRK_SIG", "BRK_ADC"); between("R8", "BRK_ADC", "GND")
+    check("J8.1" in nets.get("+3V3", set()) and "J8.1" not in nets.get("+5V", set()),
+          "J8 (HX711) powered from +3V3, not +5V")
+    check("J8.3" in nets.get("BRK_DT", set()) and "J1.8" in nets.get("BRK_DT", set()),
+          "HX711 DOUT (J8.3) on GPIO33 (J1.8)")
+    check("J8.4" in nets.get("BRK_SCK", set()) and "J2.16" in nets.get("BRK_SCK", set()),
+          "HX711 SCK (J8.4) on GPIO15 (J2.16)")
     between("R13", "ESTOP", "+3V3")        # E-stop NC to GND: open (pressed / cut) reads HIGH
     between("R16", "DIR", "DIR_IO")
     between("R17", "TF_TX", "TF_RX_IO")
+    between("R19", "LED_DATA", "LED_IO")
+    check("J2.15" in nets.get("LED_IO", set()), "LED_IO on GPIO2 (J2.15)")
+    check(not ({"J13.1", "J13.2"} & set().union(*(nets.get(k, set()) for k in ("+5V", "ESP_5V", "+3V3")))),
+          "J13 (LED_DATA) has no board power rail (+5V/ESP_5V/+3V3)")
     check("J1.6" in nets.get("TF_RX_IO", set()) and "J1.4" not in nets.get("TF_RX_IO", set()),
           "TF-Luna RX on GPIO35 (J1.6), not GPIO39 (J1.4)")
     check(not any(p.startswith(("J1.", "J2.")) for p in nets.get("LCD_RST", set())),

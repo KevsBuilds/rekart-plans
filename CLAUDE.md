@@ -14,7 +14,7 @@ controllers. Project overview, safety rules and licenses: [README.md](README.md)
 | `docs/` | Wiring diagram, parts list, build guide, test data |
 
 ## Division of work
-- **Kevin** draws schematics in KiCad 10 (system Flatpak on the OptiPlex).
+- **Kevin** draws schematics and routes PCBs in KiCad 10 (OptiPlex Flatpak or Windows KiCad 10).
 - **Claude** runs `pcb/check.sh`, reads the reports, and proposes fixes (by ref + pin, against SPEC.md).
 - Edit a `.kicad_sch` only when Kevin asks: one change at a time, KiCad closed on that file,
   then re-run `pcb/check.sh` and report. Board-specific rules are in that board's CLAUDE.md.
